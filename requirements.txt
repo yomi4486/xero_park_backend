@@ -1,0 +1,8 @@
+# API関連
+fastapi
+uvicorn
+
+uuid
+python-dotenv
+
+psycopg2 # PostgreSQLに接続するためのライブラリ

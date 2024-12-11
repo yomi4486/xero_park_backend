@@ -1,0 +1,13 @@
+services:
+  api:
+    image: python:3.11.10-bookworm
+    container_name: xeropark_api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: 
+      - .env
+    ports:
+      - "6789:6789"
+    volumes:
+      - ./:/usr/app # ホスト側のパス:コンテナ側の絶対パス

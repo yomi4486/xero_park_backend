@@ -1,0 +1,9 @@
+tables:
+  pages:
+    id:        { type: SERIAL, primary_key: true } # 記事のid
+    title:     { type: varchar(64) NOT NULL }      # 記事のタイトル
+    datail:    { type: varchar(2048) NOT NULL, }   # 記事の概要
+    author:    { type: varchar(32) NOT NULL, }     # 記事の投稿者名
+    firsttime: {type: TIMESTAMP,}                  # 最初に投稿された時間
+    lastedit:  { type: date, }                     # 最後の編集された時間
+    tags:      { type: varchar(4096), }            # 記事のジャンル（複数個ある場合はパイプなどで区切ってサーバー側で文字列処理しようかな？）
