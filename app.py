@@ -1,6 +1,6 @@
 from os.path import join, dirname
 from dotenv import load_dotenv
-import fastapi,json,os, psycopg2
+import fastapi,json,os, psycopg2,datetime
 from fastapi.middleware.cors import CORSMiddleware
 
 app = fastapi.FastAPI()
@@ -23,22 +23,14 @@ connection = psycopg2.connect(
 )
 
 @app.post("/post")
-def post(token:str="",title:str="",datail:str="",tags:list=[]):
+def post(token:str="",title:str="",datail:str="",content:str="",tags:list=[]):
+    dt_now = datetime.datetime.now()
+    now_timestamp = dt_now.strftime('%Y-%m-%d %H:%M:%S')
     with connection:
         with connection.cursor() as cursor:
-            sql = f"""
-                INSERT INTO testdb (
-                    id, 
-                    title,
-                    datail,
-                    author,
-                    firsttime,
-                    lastedit,
-                    tags,
-                ) VALUES (
-                    
-            )"""
-            cursor.execute(sql)
+            sql = "INSERT INTO testdb (title,datail,author,firsttime,lastedit,tags,content) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            # TODO: usernameはtokenから取得する。
+            cursor.execute(sql,(title,datail,"username",now_timestamp,now_timestamp,tags,content))
     
         # コミットしてトランザクション実行
         connection.commit()
