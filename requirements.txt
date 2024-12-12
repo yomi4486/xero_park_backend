@@ -6,3 +6,5 @@ uuid
 python-dotenv
 
 psycopg2 # PostgreSQLに接続するためのライブラリ
+
+python-multipart
