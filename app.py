@@ -37,7 +37,6 @@ connection = psycopg2.connect(
 def post(user_data: UserData):
     dt_now = datetime.datetime.now()
     now_timestamp = dt_now.strftime('%Y-%m-%d %H:%M:%S')
-    print(user_data.title,flush=True)
     with connection:
         with connection.cursor() as cursor:
             sql = "INSERT INTO test (title,datail,author,firsttime,lastedit,tags,content) VALUES (%s,%s,%s,%s,%s,%s,%s) RETURNING id;"
@@ -51,13 +50,19 @@ def post(user_data: UserData):
 
 @app.get("/read")
 def read(id:int):
-    sql = "SELECT content FROM test WHERE id = {id};".format(id)
+    sql = f"SELECT * FROM test WHERE id = {id};"
     try:
         with connection:
             with connection.cursor() as cursor:
                 # TODO: usernameはtokenから取得する。
                 cursor.execute(sql)
-                content = cursor.fetchone()[0]
+                row = cursor.fetchone()
+                if row:
+                    columns = [desc[0] for desc in cursor.description]
+                    content = dict(zip(columns,row))
+                else:
+                    raise HTTPException(status_code=404, detail="Page not found")
+        print(f"コンテンツ：{content}",flush=True)
         return content
     except:
         raise HTTPException(status_code=404, detail="Page not found")
