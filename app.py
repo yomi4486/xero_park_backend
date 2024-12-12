@@ -3,6 +3,17 @@ from dotenv import load_dotenv
 import fastapi,json,os, psycopg2,datetime
 from fastapi.middleware.cors import CORSMiddleware
 
+from pydantic import BaseModel
+
+from fastapi import HTTPException
+
+class UserData(BaseModel): 
+    token: str 
+    title: str
+    datail: str
+    content: str
+    tags: str
+
 app = fastapi.FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -23,14 +34,30 @@ connection = psycopg2.connect(
 )
 
 @app.post("/post")
-def post(token:str="",title:str="",datail:str="",content:str="",tags:list=[]):
+def post(user_data: UserData):
     dt_now = datetime.datetime.now()
     now_timestamp = dt_now.strftime('%Y-%m-%d %H:%M:%S')
+    print(user_data.title,flush=True)
     with connection:
         with connection.cursor() as cursor:
-            sql = "INSERT INTO testdb (title,datail,author,firsttime,lastedit,tags,content) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            sql = "INSERT INTO test (title,datail,author,firsttime,lastedit,tags,content) VALUES (%s,%s,%s,%s,%s,%s,%s) RETURNING id;"
             # TODO: usernameはtokenから取得する。
-            cursor.execute(sql,(title,datail,"username",now_timestamp,now_timestamp,tags,content))
-    
+            cursor.execute(sql,(user_data.title,user_data.datail,user_data.token,now_timestamp,now_timestamp,user_data.tags,user_data.content))
+            inserted_id = cursor.fetchone()[0]
+            print(inserted_id,flush=True)
         # コミットしてトランザクション実行
         connection.commit()
+    return inserted_id
+
+@app.get("/read")
+def read(id:int):
+    sql = "SELECT content FROM test WHERE id = {id};".format(id)
+    try:
+        with connection:
+            with connection.cursor() as cursor:
+                # TODO: usernameはtokenから取得する。
+                cursor.execute(sql)
+                content = cursor.fetchone()[0]
+        return content
+    except:
+        raise HTTPException(status_code=404, detail="Page not found")
