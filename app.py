@@ -35,6 +35,7 @@ connection = psycopg2.connect(
 
 @app.post("/post")
 def post(user_data: UserData):
+    print("Post ok!",flush=True)
     dt_now = datetime.datetime.now()
     now_timestamp = dt_now.strftime('%Y-%m-%d %H:%M:%S')
     with connection:
@@ -50,6 +51,7 @@ def post(user_data: UserData):
 
 @app.get("/read")
 def read(id:int):
+    print(f"read ok:{id}",flush=True)
     sql = f"SELECT * FROM test WHERE id = {id};"
     try:
         with connection:
