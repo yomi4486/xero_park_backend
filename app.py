@@ -18,6 +18,7 @@ app = fastapi.FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -68,3 +69,22 @@ def read(id:int):
         return content
     except:
         raise HTTPException(status_code=404, detail="Page not found!")
+
+@app.get("/get_user_page") # 投稿者がユーザーIDと一致するページを一括取得
+def get_user_page(id: str):
+    sql = f"SELECT * FROM test WHERE author = '{id}';"
+    try:
+        with connection:
+            with connection.cursor() as cursor:
+                # TODO: usernameはtokenから取得する。
+                cursor.execute(sql)
+                rows = cursor.fetchall()
+                if rows:
+                    columns = [desc[0] for desc in cursor.description]
+                    content = [dict(zip(columns, row)) for row in rows]
+                else:
+                    raise HTTPException(status_code=404, detail="Page not found!")
+        print(f"コンテンツ：{content}", flush=True)
+        return content
+    except:
+        raise HTTPException(status_code=404, detail="Page not found")
