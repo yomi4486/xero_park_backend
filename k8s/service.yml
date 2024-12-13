@@ -6,6 +6,8 @@ metadata:
 spec:
   type: NodePort
   ports:
-  - port: 6789
+  - protocol: TCP
+    post: 80
+    targetPort: 6789
   selector:
     app: xeropark-api
