@@ -61,8 +61,8 @@ def read(id:int):
                     columns = [desc[0] for desc in cursor.description]
                     content = dict(zip(columns,row))
                 else:
-                    raise HTTPException(status_code=404, detail="Page not found")
+                    raise HTTPException(status_code=404, detail="Page not found!")
         print(f"コンテンツ：{content}",flush=True)
         return content
     except:
-        raise HTTPException(status_code=404, detail="Page not found")
+        raise HTTPException(status_code=404, detail="Page not found!")
