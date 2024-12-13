@@ -1,7 +1,7 @@
 services:
   api:
     image: python:3.11.10-bookworm
-    container_name: xeropark_api
+    container_name: xeropark-api
     build:
       context: .
       dockerfile: Dockerfile
