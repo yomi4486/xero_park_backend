@@ -8,7 +8,7 @@ spec:
     app: xeropark-api
   ports:
   - protocol: TCP
-    post: 80
+    port: 80
     targetPort: 6789
   type: NodePort
   selector:
