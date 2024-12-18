@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from pydantic import BaseModel
 
-from fastapi import HTTPException
+from fastapi import HTTPException 
 
 class UserData(BaseModel): 
     token: str 
@@ -14,12 +14,16 @@ class UserData(BaseModel):
     content: str
     tags: str
 
+class DeleteFormat(BaseModel): 
+    token: str 
+    id: int
+
 app = fastapi.FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["*","DELETE"],
     allow_headers=["*"],
 )
 
@@ -88,3 +92,18 @@ def get_user_page(id: str):
         return content
     except:
         raise HTTPException(status_code=404, detail="Page not found")
+    
+@app.delete('/delete_page')
+def delete_page(user_data:DeleteFormat):
+    try:
+        with connection:
+            with connection.cursor() as cursor:
+                sql = "DELETE FROM test WHERE id = %s AND author = %s;"
+                # TODO: usernameはtokenから取得する。
+                cursor.execute(sql,(user_data.id,user_data.token))
+            # コミットしてトランザクション実行
+            connection.commit()
+    except Exception as e:
+        print(e,flush=True)
+        raise HTTPException(status_code=401, detail="permission denied")
+    return {"datail": "success deleted."}
