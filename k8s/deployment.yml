@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
       - name: xeropark-api
-        image: python:3.11.10-bookworm
+        image: xeropark-api:latest
         ports:
         - containerPort: 6789
