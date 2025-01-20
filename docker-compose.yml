@@ -1,6 +1,6 @@
 services:
   api:
-    image: python:3.11.10-bookworm
+    image: xeropark-api:latest
     container_name: xeropark-api
     build:
       context: .
