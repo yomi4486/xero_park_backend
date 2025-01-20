@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app: xeropark-api
-  replicas: 4 # podの数
+  replicas: 0 # podの数
   template:
     metadata:
       labels:
